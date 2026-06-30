@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вклад команды — Travel Bro 🤙</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root { color-scheme: light dark; --accent: #a855f7; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, system-ui, sans-serif; max-width: 920px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .meta { color: #888; font-size: 13px; margin-bottom: 16px; }
+  .payout { background: #a855f714; border: 1px solid #a855f755; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
+  .payout-head { font-weight: 600; margin-bottom: 10px; }
+  .payout-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .payout #bank { font-size: 20px; font-weight: 700; padding: 8px 12px; width: 170px; border-radius: 9px; border: 1px solid #8886; background: transparent; color: inherit; }
+  .payout #cur { width: 84px; font-size: 15px; padding: 8px; border-radius: 9px; border: 1px solid #8886; background: transparent; color: inherit; }
+  .chips { display: flex; gap: 6px; }
+  .chip { font-size: 15px; padding: 7px 13px; border-radius: 9px; border: 1px solid #8886; background: transparent; color: inherit; cursor: pointer; line-height: 1; transition: transform .12s, background .15s, color .15s, border-color .15s; }
+  .chip:hover { transform: translateY(-1px); }
+  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .payout-hint { font-size: 12px; margin-top: 9px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; }
+  .chart-box { width: 320px; height: 320px; }
+  .cards { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+  .card { flex: 1 1 200px; min-width: 190px; border: 1px solid #8883; border-left: 5px solid var(--accent); border-radius: 12px; padding: 14px 16px; background: #8881; transition: transform .18s ease, box-shadow .18s ease; }
+  .card.pending { opacity: .72; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px #0002; }
+  .card .who { display: flex; align-items: center; gap: 6px; font-weight: 600; margin-bottom: 6px; flex-wrap: wrap; }
+  .card .amount { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+  .card .sub { color: #888; font-size: 13px; margin-top: 2px; }
+  .card .bar { height: 6px; border-radius: 3px; background: #8882; margin-top: 10px; overflow: hidden; }
+  .card .bar > i { display: block; height: 100%; border-radius: 3px; width: 0; transition: width .9s cubic-bezier(.22,1,.36,1); }
+  .reconcile { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 14px; font-size: 14px; min-height: 1px; }
+  .reconcile .ok { color: #10b981; font-weight: 600; }
+  .copy-btn { font-size: 13px; padding: 7px 12px; border-radius: 9px; border: 1px solid #8886; background: transparent; color: inherit; cursor: pointer; transition: transform .12s; }
+  .copy-btn:active { transform: translateY(1px); }
+  details.tbl { margin-top: 22px; }
+  details.tbl > summary { cursor: pointer; color: #888; font-size: 13px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 14px; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #8883; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  .dot { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: middle; }
+  .pct { font-weight: 700; }
+  .money { font-weight: 700; color: #10b981; }
+  .muted { color: #888; }
+  .warn { background: #f59e0b22; border: 1px solid #f59e0b88; border-radius: 8px; padding: 10px 14px; margin-bottom: 18px; font-size: 14px; }
+  .note { color: #888; font-size: 12px; margin-top: 18px; line-height: 1.5; }
+  .weights { font-size: 12px; color: #888; margin-top: 6px; }
+  .live { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; margin-right: 5px; vertical-align: middle; animation: pulse 2s infinite; }
+  .section { margin-top: 30px; }
+  .section h2 { font-size: 16px; margin: 0 0 12px; }
+  .chart-wide { height: 230px; position: relative; }
+  .funnel { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .stage { flex: 1 1 130px; min-width: 120px; border: 1px solid #8883; border-radius: 11px; padding: 11px 14px; background: #8881; transition: transform .18s ease, box-shadow .18s ease; }
+  .stage:hover { transform: translateY(-3px); box-shadow: 0 8px 22px #0002; }
+  .stage .n { font-size: 26px; font-weight: 800; line-height: 1; }
+  .stage .l { font-size: 12px; color: #888; margin-top: 5px; }
+  .mods { display: flex; flex-direction: column; gap: 9px; }
+  .mod { border: 1px solid #8883; border-radius: 10px; padding: 10px 13px; background: #8881; }
+  .mod-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+  .mod-name { font-weight: 700; }
+  .mod-desc { color: #888; font-size: 13px; }
+  .mod-lines { margin-left: auto; font-size: 13px; color: #888; }
+  .mod-lines b { color: inherit; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.owner { background: #a855f722; color: var(--accent); }
+  .badge.idle { background: #8882; color: #888; }
+  .badge.stale { background: #ef444422; color: #ef4444; }
+  .badge.active { background: #10b98122; color: #10b981; }
+  .mod .contrib { display: flex; flex-wrap: wrap; gap: 12px; color: #888; font-size: 13px; margin-top: 8px; }
+  .mod .contrib b { color: inherit; }
+  .mod .cbar { height: 7px; border-radius: 4px; background: #8882; overflow: hidden; display: flex; margin-top: 9px; }
+  .mod .cbar > i { height: 100%; width: 0; transition: width .9s cubic-bezier(.22,1,.36,1); }
+  .prs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pr { display: flex; align-items: center; gap: 8px; border: 1px solid #8883; border-radius: 999px; padding: 6px 12px; font-size: 13px; }
+  .pr .num { font-family: ui-monospace, SFMono-Regular, monospace; color: #888; }
+  .feed { display: flex; flex-direction: column; gap: 7px; }
+  .feed-item { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; border: 1px solid #8883; border-radius: 10px; padding: 9px 12px; }
+  .feed-date { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; color: #888; min-width: 44px; }
+  .feed-who { font-weight: 600; }
+  .feed-area { flex: 1 1 160px; }
+  .area-tag { font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: #8882; }
+  .feed-msg { flex: 1 1 220px; font-size: 14px; }
+  .feed-delta { font-size: 12px; font-family: ui-monospace, SFMono-Regular, monospace; white-space: nowrap; }
+  .feed-delta .add { color: #10b981; font-weight: 700; }
+  .feed-delta .del { color: #ef4444; }
+  .feat-cat { margin-top: 16px; }
+  .feat-cat h3 { font-size: 13px; margin: 0 0 9px; color: #888; font-weight: 600; }
+  .feats { display: flex; flex-wrap: wrap; gap: 12px; }
+  .feat { flex: 1 1 240px; min-width: 220px; border: 1px solid #8883; border-left: 4px solid var(--accent); border-radius: 12px; padding: 12px 14px; background: #8881; transition: transform .18s ease, box-shadow .18s ease; }
+  .feat:hover { transform: translateY(-3px); box-shadow: 0 8px 22px #0002; }
+  .feat-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+  .feat-name { font-weight: 700; }
+  .feat-trig { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; color: var(--accent); background: #a855f714; padding: 1px 7px; border-radius: 6px; }
+  .feat-desc { color: #888; font-size: 13px; line-height: 1.45; }
+  .feat-foot { display: flex; align-items: center; gap: 10px; margin-top: 9px; flex-wrap: wrap; }
+  .feat-owner { font-size: 12px; color: #888; }
+  .badge.live { background: #10b98122; color: #10b981; }
+  .badge.external { background: #f59e0b22; color: #f59e0b; }
+  .badge.wip { background: #8882; color: #888; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 #10b98166; } 70% { box-shadow: 0 0 0 7px #10b98100; } 100% { box-shadow: 0 0 0 0 #10b98100; } }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  .anim-rise { opacity: 0; animation: riseIn .5s cubic-bezier(.22,1,.36,1) forwards; animation-delay: var(--d, 0s); }
+  .anim-slide { opacity: 0; animation: slideIn .45s ease forwards; animation-delay: var(--d, 0s); }
+  @media (prefers-reduced-motion: reduce) {
+    .anim-rise, .anim-slide { animation: none; opacity: 1; }
+    .live { animation: none; }
+    .card .bar > i, .mod .cbar > i { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <h1 class="anim-rise">Вклад команды — Travel Bro 🤙</h1>
+  <div class="meta anim-rise" id="meta" style="--d:.05s"></div>
+  <div class="warn">⚠️ Пока коммитил один человек — диаграмма оживёт, когда каждый начнёт коммитить под своим именем (см. <code>.mailmap</code>).</div>
+  <div class="payout anim-rise" style="--d:.1s">
+    <div class="payout-head">💰 Общий банк к распределению</div>
+    <div class="payout-row">
+      <input id="bank" type="number" min="0" step="100" placeholder="напр. 50000" inputmode="numeric">
+      <div class="chips" id="chips">
+        <button type="button" class="chip" data-cur="⭐">⭐</button>
+        <button type="button" class="chip" data-cur="฿">฿</button>
+        <button type="button" class="chip" data-cur="$">$</button>
+        <button type="button" class="chip" data-cur="₽">₽</button>
+      </div>
+      <input id="cur" type="text" maxlength="4" placeholder="валюта">
+    </div>
+    <div class="payout-hint muted" id="payoutHint">Введи сумму — посчитаю, кому сколько.</div>
+  </div>
+  <div class="grid anim-rise" style="--d:.15s">
+    <div class="chart-box"><canvas id="pie"></canvas></div>
+    <div id="legend"></div>
+  </div>
+  <div class="cards" id="cards"></div>
+  <div class="reconcile" id="reconcile"></div>
+  <div class="section anim-rise" id="features" style="--d:.18s"></div>
+  <div class="section" id="activity"></div>
+  <div class="section" id="prs"></div>
+  <div class="section" id="modules"></div>
+  <div class="section" id="recent"></div>
+  <details class="tbl">
+    <summary>Подробности по метрикам (коммиты, строки, активность)</summary>
+    <div class="table-wrap">
+      <table id="tbl">
+        <thead><tr>
+          <th>Партнёр</th><th>Доля</th><th>К выплате</th>
+          <th>Коммиты</th><th>Строки +</th><th>Строки −</th><th>Модули</th><th>Активность</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </details>
+  <div class="weights">Веса микса: коммиты 0.3 · строки 0.3 · модули 0.4 (правятся в scripts/contribution_config.json)</div>
+  <div class="note">Приложение зарабатывает на маршрутах: автор находит нетуристическое место, постит его в соцсети, а тот, кто хочет повторить маршрут, платит как за чашку кофе и получает всю инструкцию (как добраться, где переночевать, где поесть). Этот счётчик — про вклад в разработку самого приложения: введи общий банк к распределению, посчитаю долю каждого по вкладу (доля × банк). Денег здесь нигде не хранится, только доля вклада; введённый банк остаётся в твоём браузере.<br>Это авто-генерируемый файл. Не редактировать вручную — пересоздаётся скриптом scripts/build_dashboard.py.</div>
+  <script>window.__DASH__ = {"title": "Вклад команды — Travel Bro 🤙", "payout_note": "Приложение зарабатывает на маршрутах: автор находит нетуристическое место, постит его в соцсети, а тот, кто хочет повторить маршрут, платит как за чашку кофе и получает всю инструкцию (как добраться, где переночевать, где поесть). Этот счётчик — про вклад в разработку самого приложения: введи общий банк к распределению, посчитаю долю каждого по вкладу (доля × банк). Денег здесь нигде не хранится, только доля вклада; введённый банк остаётся в твоём браузере.", "weights": {"commits": 0.3, "lines": 0.3, "units": 0.4}, "recent_mode": "area", "idle_after_days": 7, "generated_at": "2026-07-01 02:23 +07", "total_commits": 2, "total_lines": 1369, "total_deleted": 7, "modules_active": 0, "modules_total": 7, "rows": [{"author": "Вова", "commits": 2, "lines": 1369, "deleted": 7, "units": 0.0, "last_active": "2026-07-01", "share_pct": 100.0, "color": "#2563eb", "pending": false}, {"author": "Виталик", "commits": 0, "lines": 0, "deleted": 0, "units": 0.0, "last_active": "", "share_pct": 0.0, "color": "#10b981", "pending": true}, {"author": "Алексей", "commits": 0, "lines": 0, "deleted": 0, "units": 0.0, "last_active": "", "share_pct": 0.0, "color": "#f59e0b", "pending": true}], "modules": [{"key": "map", "label": "🗺 Карта и места", "desc": "тепловая карта толпа/укромное · точки · путь к месту", "owner": "Вова", "owner_color": "#2563eb", "lines": 0, "contributors": [], "started": false}, {"key": "routes", "label": "🧳 Маршруты", "desc": "платный маршрут «от двери»: перелёт · дорога · ночлег · еда", "owner": "Вова", "owner_color": "#2563eb", "lines": 0, "contributors": [], "started": false}, {"key": "discover", "label": "🧭 Гид по городу", "desc": "бесплатный серч «чем заняться» по сети", "owner": "Алексей", "owner_color": "#f59e0b", "lines": 0, "contributors": [], "started": false}, {"key": "guides", "label": "👤 Гиды", "desc": "проводники: сбор групп · оплата · связь с первооткрывателями", "owner": "Алексей", "owner_color": "#f59e0b", "lines": 0, "contributors": [], "started": false}, {"key": "housing", "label": "🛏 Жильё", "desc": "шеринг комнат у местных за дружескую плату", "owner": "Виталик", "owner_color": "#10b981", "lines": 0, "contributors": [], "started": false}, {"key": "payments", "label": "💸 Оплата и выплаты", "desc": "приём оплаты · быстрые трансграничные выплаты", "owner": "Виталик", "owner_color": "#10b981", "lines": 0, "contributors": [], "started": false}, {"key": "core", "label": "🧠 Ядро", "desc": "профиль · лента · аккаунты · гео", "owner": "Вова", "owner_color": "#2563eb", "lines": 0, "contributors": [], "started": false}], "recent": [{"date": "2026-07-01", "author": "Вова", "color": "#2563eb", "area": "README.md", "area_label": "README.md", "added": 110, "deleted": 7}, {"date": "2026-07-01", "author": "Вова", "color": "#2563eb", "area": "scripts", "area_label": "🛠 скрипты", "added": 1259, "deleted": 0}], "activity": {"labels": ["11.05", "18.05", "25.05", "01.06", "08.06", "15.06", "22.06", "29.06"], "datasets": [{"author": "Вова", "color": "#2563eb", "data": [0, 0, 0, 0, 0, 0, 0, 2]}]}, "open_prs": [], "features": {"_комментарий": "ДОРОЖНАЯ КАРТА Travel Bro. Источник правды для секции «Дорожная карта» на дашборде. ПРАВИЛО: сделал что-то — поменяй статус (planned → wip → live), дашборд пересоберётся build_dashboard.py (или Action при push). status: live = сделано/работает, wip = сейчас в процессе, planned = в планах, external = нужен внешний сервис.", "intro": "Живой статус проекта: ✅ сделано · 🚧 в процессе · 📋 в планах. Обновляем по ходу.", "categories": [{"label": "✅ Сделано", "features": [{"name": "Концепция и название", "trigger": "идея", "desc": "Зафиксированы идея, миссия, роли и три опоры (маршрут → дорога → жильё). Название — Travel Bro. Всё в Идея.md.", "status": "live", "owner": "Вова", "color": "#2563eb"}, {"name": "Репозиторий и команда", "trigger": "GitHub", "desc": "Приватный репо Burik-12/TravelBro. Подключены Виталик и Алексей (приняли приглашения).", "status": "live", "owner": "Вова", "color": "#2563eb"}, {"name": "Счётчик вклада", "trigger": "дашборд", "desc": "Дашборд вклада как в Lumi: доли по git-миксу (коммиты/строки/модули), активность, калькулятор распределения банка.", "status": "live", "owner": "Вова", "color": "#2563eb"}]}, {"label": "🚧 Сейчас в процессе", "features": [{"name": "Первые коммиты команды", "trigger": "Виталик · Алексей", "desc": "Ребята клонируют репо и делают первые коммиты — после этого их доли поедут в счётчике.", "status": "wip", "owner": "Виталик", "color": "#10b981"}, {"name": "Аналоги учёта вклада", "trigger": "ресёрч", "desc": "Изучаем лучшие инструменты совместного учёта/распределения (SourceCred, Open Collective и др.) — что взять себе.", "status": "wip", "owner": "Вова", "color": "#2563eb"}, {"name": "Выбор стека и платформы", "trigger": "—", "desc": "Решаем, на чём пишем: мобильное приложение / web / Telegram Mini App, какой бэкенд и карты.", "status": "wip", "owner": "Алексей", "color": "#f59e0b"}]}, {"label": "📋 Продукт (в планах)", "features": [{"name": "Карта: толпа vs укромное", "trigger": "ядро", "desc": "Тепловая карта людей: где толпа, а где красиво и тихо. Карта показывает путь к укромному месту.", "status": "planned", "owner": "Вова", "color": "#2563eb"}, {"name": "Маршруты «от твоей двери»", "trigger": "платно", "desc": "Зашифрованный маршрут: перелёт + как добраться + ночлег + еда. Оплата «как за кофе» в локальной валюте, деньги автору.", "status": "planned", "owner": "Вова", "color": "#2563eb"}, {"name": "Гид по городу", "trigger": "бесплатно", "desc": "Серч по сети «чем заняться в городе»: места, развлечения, где было весело.", "status": "planned", "owner": "Алексей", "color": "#f59e0b"}, {"name": "Гиды (проводники)", "trigger": "роль", "desc": "Маркетплейс гидов для тех, кто хочет «за руку»: сбор групп, оплата (напр. 300 ฿/чел). Гиды коннектятся с первооткрывателями.", "status": "planned", "owner": "Алексей", "color": "#f59e0b"}, {"name": "Жильё от своих", "trigger": "роль", "desc": "Шеринг свободных комнат у местных за дружескую плату (не Booking, не бесплатно). Возможна синергия с SabaiStay.", "status": "planned", "owner": "Виталик", "color": "#10b981"}, {"name": "Оплата и выплаты", "trigger": "деньги", "desc": "Приём оплаты + лёгкие быстрые трансграничные выплаты зарабатывающим.", "status": "planned", "owner": "Виталик", "color": "#10b981"}]}]}, "single_author_warning": true};</script>
+  <script>
+
+(function () {
+  let D = window.__DASH__;
+  let chart = null, actChart = null;
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const ru = (n) => Number(n).toLocaleString('ru-RU', { maximumFractionDigits: 0 });
+
+  const bankVal = () => parseFloat($('bank').value);
+  const curVal = () => ($('cur').value || '').trim();
+  const hasBank = () => { const b = bankVal(); return !isNaN(b) && b > 0; };
+  const suffix = () => { const c = curVal(); return c ? ' ' + c : ''; };
+
+  function daysSince(d) {
+    if (!d) return null;
+    const dt = new Date(d + 'T00:00:00');
+    if (isNaN(dt)) return null;
+    const now = new Date();
+    const t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.max(0, Math.round((t - dt) / 86400000));
+  }
+
+  // Бейдж активности/простоя — считается в браузере, поэтому «живой» без пересборки.
+  function statusBadge(r) {
+    if (r.pending) return '<span class="badge idle">⏳ ждёт старта</span>';
+    const days = daysSince(r.last_active);
+    if (days == null) return '';
+    if (days > (D.idle_after_days || 7)) return '<span class="badge stale">💤 ' + days + ' дн. тишины</span>';
+    if (days <= 1) return '<span class="badge active">🔥 в работе</span>';
+    return '<span class="badge idle">' + days + ' дн. назад</span>';
+  }
+
+  // Раскладка банка по долям так, чтобы сумма частей в точности равнялась банку
+  // (метод наибольших остатков — без «потерянных» рублей на округлении).
+  function splitBank(bank, rows) {
+    const totalPct = rows.reduce((a, r) => a + r.share_pct, 0) || 100;
+    const exact = rows.map((r) => bank * r.share_pct / totalPct);
+    const out = exact.map(Math.floor);
+    let rem = Math.round(bank) - out.reduce((a, b) => a + b, 0);
+    const order = exact
+      .map((v, i) => ({ i, frac: v - Math.floor(v) }))
+      .sort((a, b) => b.frac - a.frac);
+    for (let k = 0; rem > 0 && k < order.length; k++) { out[order[k].i]++; rem--; }
+    return out;
+  }
+
+  // Плавная «намотка» числа от предыдущего значения к новому. opts: {sfx, dur, dec}.
+  function countUp(el, to, opts) {
+    opts = opts || {};
+    const sfx = opts.sfx || '';
+    const dec = opts.dec || 0;
+    const fmt = (v) => (dec ? Number(v).toFixed(dec) : ru(Math.round(v))) + sfx;
+    if (reduce) { el.dataset.val = to; el.textContent = fmt(to); return; }
+    const from = parseFloat(el.dataset.val || '0') || 0;
+    el.dataset.val = to;
+    const dur = opts.dur || 600;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(from + (to - from) * eased);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Заливаем все полоски (.bar>i, .cbar>i) от 0 к целевой ширине из data-w.
+  function fillBars(root) {
+    (root || document).querySelectorAll('[data-w]').forEach((el) => {
+      const w = el.getAttribute('data-w');
+      if (reduce) { el.style.width = w; return; }
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.width = w; }));
+    });
+  }
+
+  function renderMeta() {
+    $('meta').innerHTML =
+      '<span class="live"></span>Обновлено: ' + esc(D.generated_at) +
+      ' · команда: ' + D.rows.length +
+      ' · коммитов: ' + D.total_commits +
+      ' · строк: +' + D.total_lines + ' / −' + (D.total_deleted || 0) +
+      ' · модулей в работе: ' + (D.modules_active || 0) + '/' + (D.modules_total || 0);
+  }
+
+  // ── График активности по неделям (стек-бар, кто сколько коммитил) ──
+  function renderActivity() {
+    const el = $('activity');
+    const A = D.activity;
+    if (!el) return;
+    if (!A || !A.datasets || !A.datasets.length) { el.innerHTML = ''; return; }
+    el.innerHTML = '<h2>📈 Активность по неделям</h2><div class="chart-wide"><canvas id="act"></canvas></div>';
+    const ds = A.datasets.map((d) => ({
+      label: d.author, data: d.data, backgroundColor: d.color,
+      stack: 'commits', borderRadius: 4, maxBarThickness: 46,
+    }));
+    if (actChart) { actChart.destroy(); actChart = null; }
+    actChart = new Chart($('act'), {
+      type: 'bar',
+      data: { labels: A.labels, datasets: ds },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        animation: reduce ? false : { duration: 900, easing: 'easeOutCubic' },
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#8882' } },
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } },
+          tooltip: { callbacks: { label: (c) => ' ' + c.dataset.label + ': ' + c.parsed.y + ' комм.' } },
+        },
+      },
+    });
+  }
+
+  // ── «Кто над чем сейчас» — открытые PR (только область, без заголовков) ──
+  function renderPRs() {
+    const el = $('prs');
+    if (!el) return;
+    const prs = D.open_prs || [];
+    if (!prs.length) { el.innerHTML = ''; return; }
+    const items = prs.map((p, i) =>
+      '<div class="pr anim-slide" style="--d:' + (i * 0.05) + 's">' +
+        '<span class="num">#' + p.number + '</span>' +
+        '<span class="area-tag">' + esc(p.area_label || p.area) + '</span>' +
+        '<span><span class="dot" style="background:' + p.color + '"></span>' + esc(p.author) + '</span>' +
+      '</div>').join('');
+    el.innerHTML = '<h2>🔧 Кто над чем сейчас (открытые PR)</h2><div class="prs">' + items + '</div>';
+  }
+
+  // ── «Кто что строит» — воронка-сводка + карточки модулей продукта ──
+  function renderModules() {
+    const el = $('modules');
+    if (!el || !D.modules) { if (el) el.innerHTML = ''; return; }
+    const stages = [
+      { n: (D.modules_active || 0), l: '🧩 модулей в работе' },
+      { n: D.rows.length,           l: '👥 в команде' },
+      { n: D.total_commits,         l: '✅ коммитов' },
+      { n: D.total_lines,           l: '⚡ строк кода' },
+    ];
+    const funnel = stages.map((s, i) =>
+      '<div class="stage anim-rise" style="--d:' + (i * 0.05) + 's">' +
+        '<div class="n" data-num="' + s.n + '">0</div><div class="l">' + s.l + '</div></div>').join('');
+
+    const mods = D.modules.map((m, i) => {
+      const badge = m.started
+        ? '<span class="badge owner">владелец: ' + esc(m.owner) + '</span>'
+        : '<span class="badge idle">ждёт старта · ' + esc(m.owner) + '</span>';
+      let contrib = '<span class="muted">пока пусто — модуль ждёт первых строк</span>';
+      let bar = '';
+      if (m.contributors && m.contributors.length) {
+        contrib = m.contributors.map((c) =>
+          '<span><span class="dot" style="background:' + c.color + '"></span><b>' +
+          esc(c.author) + '</b> ' + c.pct + '%</span>').join('');
+        bar = '<div class="cbar">' + m.contributors.map((c) =>
+          '<i data-w="' + c.pct + '%" style="background:' + c.color + '"></i>').join('') + '</div>';
+      }
+      return '<div class="mod anim-rise" style="--d:' + (i * 0.06) + 's">' +
+        '<div class="mod-top">' +
+          '<span class="mod-name">' + esc(m.label) + '</span>' +
+          '<span class="mod-desc">' + esc(m.desc) + '</span>' +
+          badge +
+          '<span class="mod-lines"><b>' + ru(m.lines) + '</b> стр.</span>' +
+        '</div>' +
+        '<div class="contrib">' + contrib + '</div>' + bar +
+      '</div>';
+    }).join('');
+
+    el.innerHTML = '<h2>🚀 Кто что строит</h2>' +
+      '<div class="funnel">' + funnel + '</div>' +
+      '<div class="mods">' + mods + '</div>';
+
+    el.querySelectorAll('.stage .n').forEach((n) =>
+      countUp(n, parseFloat(n.getAttribute('data-num')) || 0, { dur: 800 }));
+    fillBars(el);
+  }
+
+  // ── Лента «что недавно добавилось» (на публичном сайте — только область) ──
+  function renderRecent() {
+    const el = $('recent');
+    if (!el || !D.recent) { if (el) el.innerHTML = ''; return; }
+    if (!D.recent.length) { el.innerHTML = '<h2>🆕 Что недавно добавилось</h2><div class="muted">Коммитов пока нет.</div>'; return; }
+    const items = D.recent.map((c, i) => {
+      const dm = c.date ? c.date.slice(8, 10) + '.' + c.date.slice(5, 7) : '—';
+      const what = (c.subject != null)
+        ? '<span class="feed-msg">' + esc(c.subject) + '</span>'
+        : '<span class="feed-area"><span class="area-tag">' + esc(c.area_label || c.area || '—') + '</span></span>';
+      const delta = '<span class="feed-delta">' +
+        (c.added ? '<span class="add">+' + ru(c.added) + '</span> ' : '') +
+        (c.deleted ? '<span class="del">−' + ru(c.deleted) + '</span>' : '') + '</span>';
+      return '<div class="feed-item anim-slide" style="--d:' + (i * 0.04) + 's">' +
+        '<span class="feed-date">' + dm + '</span>' +
+        '<span class="feed-who"><span class="dot" style="background:' + c.color + '"></span>' + esc(c.author) + '</span>' +
+        what + delta +
+      '</div>';
+    }).join('');
+    el.innerHTML = '<h2>🆕 Что недавно добавилось</h2><div class="feed">' + items + '</div>';
+  }
+
+  // Текст в центре «бублика»: общий банк, когда он задан.
+  const centerText = {
+    id: 'centerText',
+    afterDatasetsDraw(c) {
+      const t = c.$centerText;
+      if (!t) return;
+      const { ctx, chartArea } = c;
+      const x = (chartArea.left + chartArea.right) / 2;
+      const y = (chartArea.top + chartArea.bottom) / 2;
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = getComputedStyle(document.body).color;
+      ctx.font = '800 21px -apple-system, system-ui, sans-serif';
+      ctx.fillText(t.main, x, y - 7);
+      ctx.font = '12px -apple-system, system-ui, sans-serif';
+      ctx.fillStyle = '#888';
+      ctx.fillText(t.sub, x, y + 15);
+      ctx.restore();
+    }
+  };
+
+  function setCenter() {
+    if (!chart) return;
+    chart.$centerText = hasBank()
+      ? { main: ru(Math.round(bankVal())) + suffix(), sub: 'банк' }
+      : null;
+    chart.draw();
+  }
+
+  function renderChart() {
+    const labels = D.rows.map((r) => r.author);
+    const values = D.rows.map((r) => r.share_pct);
+    const colors = D.rows.map((r) => r.color);
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = values;
+      chart.data.datasets[0].backgroundColor = colors;
+      chart.update();
+    } else {
+      chart = new Chart($('pie'), {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2 }] },
+        options: {
+          animation: reduce ? false : { animateRotate: true, animateScale: true, duration: 1000, easing: 'easeOutCubic' },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => {
+                  let s = ' ' + c.label + ': ' + c.parsed + '%';
+                  if (hasBank()) {
+                    const amt = splitBank(bankVal(), D.rows)[c.dataIndex];
+                    s += ' · ' + ru(amt) + suffix();
+                  }
+                  return s;
+                }
+              }
+            }
+          },
+          cutout: '60%'
+        },
+        plugins: [centerText]
+      });
+    }
+    $('legend').innerHTML = D.rows.map((r, i) =>
+      '<div class="anim-slide" style="--d:' + (i * 0.06) + 's"><span class="dot" style="background:' + r.color + '"></span>' +
+      esc(r.author) + ' — <b class="lg-pct" data-pct="' + r.share_pct + '">0%</b>' +
+      (r.pending ? ' <span class="muted">· ждёт старта</span>' : '') + '</div>').join('');
+    $('legend').querySelectorAll('.lg-pct').forEach((b) =>
+      countUp(b, parseFloat(b.getAttribute('data-pct')) || 0, { sfx: '%', dec: 1, dur: 900 }));
+  }
+
+  // Карточки строятся один раз (или при смене состава) — чтобы при вводе банка
+  // цифры анимировались от предыдущего значения, а не прыгали от нуля.
+  function buildCards() {
+    $('cards').innerHTML = D.rows.map((r, i) =>
+      '<div class="card anim-rise' + (r.pending ? ' pending' : '') + '" style="--d:' + (0.2 + i * 0.07) + 's;border-left-color:' + r.color + '">' +
+        '<div class="who"><span class="dot" style="background:' + r.color + '"></span>' + esc(r.author) + statusBadge(r) + '</div>' +
+        '<div class="amount" data-i="' + i + '" data-val="0">—</div>' +
+        '<div class="sub">' + r.share_pct + '% вклада</div>' +
+        '<div class="bar"><i data-w="' + r.share_pct + '%" style="background:' + r.color + '"></i></div>' +
+      '</div>').join('');
+    fillBars($('cards'));
+  }
+
+  function updateMoney() {
+    const on = hasBank();
+    const amounts = on ? splitBank(bankVal(), D.rows) : null;
+    const sfx = suffix();
+
+    D.rows.forEach((r, i) => {
+      const el = document.querySelector('#cards .amount[data-i="' + i + '"]');
+      if (!el) return;
+      if (on) { countUp(el, amounts[i], { sfx: sfx, dur: 450 }); }
+      else { el.dataset.val = '0'; el.textContent = '—'; }
+    });
+
+    const tb = document.querySelector('#tbl tbody');
+    tb.innerHTML = D.rows.map((r, i) => {
+      const money = on
+        ? '<td class="money">' + ru(amounts[i]) + sfx + '</td>'
+        : '<td class="muted">—</td>';
+      return '<tr>' +
+        '<td><span class="dot" style="background:' + r.color + '"></span>' + esc(r.author) + '</td>' +
+        '<td class="pct">' + r.share_pct + '%</td>' + money +
+        '<td>' + r.commits + '</td>' +
+        '<td>' + ru(r.lines) + '</td>' +
+        '<td class="muted">' + ru(r.deleted || 0) + '</td>' +
+        '<td>' + r.units + '</td>' +
+        '<td class="muted">' + (r.last_active || '—') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    if (on) {
+      const sum = amounts.reduce((a, b) => a + b, 0);
+      $('reconcile').innerHTML =
+        '<span class="ok">Итого: ' + ru(sum) + sfx + ' = банк ✓</span>' +
+        '<button type="button" class="copy-btn" id="copyBtn">📋 Скопировать раскладку</button>';
+      $('copyBtn').addEventListener('click', copySplit);
+      $('payoutHint').textContent = 'Суммы пересчитаны и сходятся в банк до копейки.';
+    } else {
+      $('reconcile').innerHTML = '';
+      $('payoutHint').textContent = 'Введи сумму — посчитаю, кому сколько.';
+    }
+    setCenter();
+  }
+
+  function copySplit() {
+    const sfx = suffix();
+    const amounts = splitBank(bankVal(), D.rows);
+    const lines = ['Раскладка — ' + D.title, 'Банк: ' + ru(Math.round(bankVal())) + sfx];
+    D.rows.forEach((r, i) =>
+      lines.push('• ' + r.author + ': ' + ru(amounts[i]) + sfx + ' (' + r.share_pct + '%)'));
+    lines.push('— обновлено ' + D.generated_at);
+    const text = lines.join('\n');
+    const btn = $('copyBtn');
+    const flash = () => {
+      if (!btn) return;
+      const old = btn.textContent;
+      btn.textContent = 'Скопировано ✓';
+      setTimeout(() => { btn.textContent = old; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash, () => fallbackCopy(text, flash));
+    } else {
+      fallbackCopy(text, flash);
+    }
+  }
+
+  function fallbackCopy(text, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    if (cb) cb();
+  }
+
+  function syncChips() {
+    const cur = curVal();
+    document.querySelectorAll('#chips .chip').forEach((c) =>
+      c.classList.toggle('active', c.dataset.cur === cur));
+  }
+
+  // ── «Что умеет Lumi» — витрина возможностей из scripts/features.json ──
+  function renderFeatures() {
+    const el = $('features');
+    const F = D.features;
+    if (!el || !F || !F.categories || !F.categories.length) { if (el) el.innerHTML = ''; return; }
+    const stMap = {
+      live: '<span class="badge live">✅ работает</span>',
+      external: '<span class="badge external">⚙️ нужен воркер</span>',
+      wip: '<span class="badge wip">🚧 в работе</span>',
+      planned: '<span class="badge wip">📋 план</span>',
+    };
+    const cats = F.categories.map((cat) => {
+      const feats = (cat.features || []).map((f, i) => {
+        const trig = f.trigger ? '<span class="feat-trig">' + esc(f.trigger) + '</span>' : '';
+        const owner = f.owner
+          ? '<span class="feat-owner"><span class="dot" style="background:' + (f.color || '#888') + '"></span>' + esc(f.owner) + '</span>'
+          : '';
+        return '<div class="feat anim-rise" style="--d:' + (i * 0.04) + 's">' +
+          '<div class="feat-head"><span class="feat-name">' + esc(f.name) + '</span>' + trig + '</div>' +
+          '<div class="feat-desc">' + esc(f.desc) + '</div>' +
+          '<div class="feat-foot">' + (stMap[f.status] || '') + owner + '</div>' +
+        '</div>';
+      }).join('');
+      return '<div class="feat-cat"><h3>' + esc(cat.label) + '</h3><div class="feats">' + feats + '</div></div>';
+    }).join('');
+    const count = F.categories.reduce((a, c) => a + ((c.features || []).length), 0);
+    el.innerHTML = '<h2>📍 Дорожная карта <span class="muted" style="font-weight:400;font-size:13px">· ' + count + ' пунктов</span></h2>' +
+      (F.intro ? '<div class="muted" style="font-size:13px;margin:-4px 0 4px">' + esc(F.intro) + '</div>' : '') +
+      cats;
+  }
+
+  function renderAll() {
+    renderMeta();
+    renderChart();
+    buildCards();
+    updateMoney();
+    renderFeatures();
+    renderActivity();
+    renderPRs();
+    renderModules();
+    renderRecent();
+  }
+
+  // Восстанавливаем введённый банк/валюту из localStorage этого браузера.
+  try {
+    const saved = JSON.parse(localStorage.getItem('tnz_payout') || '{}');
+    if (saved.bank) $('bank').value = saved.bank;
+    if (saved.cur) $('cur').value = saved.cur;
+  } catch (e) {}
+
+  function onCalcChange() {
+    try {
+      localStorage.setItem('tnz_payout', JSON.stringify({ bank: $('bank').value, cur: $('cur').value }));
+    } catch (e) {}
+    syncChips();
+    updateMoney();
+  }
+
+  $('bank').addEventListener('input', onCalcChange);
+  $('cur').addEventListener('input', onCalcChange);
+  document.querySelectorAll('#chips .chip').forEach((c) => {
+    c.addEventListener('click', () => { $('cur').value = c.dataset.cur; onCalcChange(); });
+  });
+
+  renderAll();
+  syncChips();
+
+  // Автообновление: тянем свежий data.json (с обходом кэша) и перерисовываем,
+  // если поменялась метка времени. На file:// тихо игнорируется.
+  async function refresh() {
+    try {
+      const r = await fetch('./data.json?ts=' + new Date().getTime(), { cache: 'no-store' });
+      if (!r.ok) return;
+      const fresh = await r.json();
+      if (fresh && fresh.generated_at && fresh.generated_at !== D.generated_at) {
+        D = fresh;
+        renderAll();
+      }
+    } catch (e) {}
+  }
+  setInterval(refresh, 180000); // каждые 3 минуты
+})();
+
+</script>
+</body>
+</html>
