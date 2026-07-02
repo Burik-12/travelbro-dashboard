@@ -8,13 +8,24 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-01 15:11 UTC",
-  "total_commits": 16,
-  "total_lines": 4385,
-  "total_deleted": 114,
+  "generated_at": "2026-07-02 08:14 UTC",
+  "total_commits": 17,
+  "total_lines": 4413,
+  "total_deleted": 119,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
+    {
+      "author": "Виталик",
+      "commits": 12,
+      "lines": 2699,
+      "deleted": 65,
+      "units": 0.0,
+      "last_active": "2026-07-02",
+      "share_pct": 66.7,
+      "color": "#10b981",
+      "pending": false
+    },
     {
       "author": "Вова",
       "commits": 5,
@@ -22,19 +33,8 @@
       "deleted": 54,
       "units": 0.0,
       "last_active": "2026-07-01",
-      "share_pct": 33.3,
+      "share_pct": 16.7,
       "color": "#2563eb",
-      "pending": false
-    },
-    {
-      "author": "Виталик",
-      "commits": 11,
-      "lines": 2671,
-      "deleted": 60,
-      "units": 0.0,
-      "last_active": "2026-07-01",
-      "share_pct": 33.3,
-      "color": "#10b981",
       "pending": false
     },
     {
@@ -44,7 +44,7 @@
       "deleted": 0,
       "units": 0.0,
       "last_active": "",
-      "share_pct": 33.3,
+      "share_pct": 16.7,
       "color": "#f59e0b",
       "pending": false
     }
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-02",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "scripts",
+      "area_label": "🛠 скрипты",
+      "added": 28,
+      "deleted": 5
+    },
     {
       "date": "2026-07-01",
       "author": "Виталик",
@@ -238,15 +247,6 @@
       "area_label": "\"docs",
       "added": 39,
       "deleted": 0
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "\"docs",
-      "area_label": "\"docs",
-      "added": 72,
-      "deleted": 0
     }
   ],
   "activity": {
@@ -262,6 +262,20 @@
     ],
     "datasets": [
       {
+        "author": "Виталик",
+        "color": "#10b981",
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12
+        ]
+      },
+      {
         "author": "Вова",
         "color": "#2563eb",
         "data": [
@@ -273,20 +287,6 @@
           0,
           0,
           5
-        ]
-      },
-      {
-        "author": "Виталик",
-        "color": "#10b981",
-        "data": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          11
         ]
       }
     ]
@@ -503,6 +503,7 @@
       }
     ]
   },
-  "equal_split": true,
+  "equal_split": false,
+  "foundation_weight": 0.5,
   "single_author_warning": false
 }
