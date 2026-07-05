@@ -8,20 +8,20 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-05 03:26 UTC",
-  "total_commits": 26,
-  "total_lines": 6570,
-  "total_deleted": 714,
+  "generated_at": "2026-07-05 03:28 UTC",
+  "total_commits": 30,
+  "total_lines": 6757,
+  "total_deleted": 736,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
     {
       "author": "Виталик",
-      "commits": 19,
-      "lines": 4664,
-      "deleted": 639,
+      "commits": 23,
+      "lines": 4851,
+      "deleted": 661,
       "units": 0.0,
-      "last_active": "2026-07-03",
+      "last_active": "2026-07-05",
       "share_pct": 66.7,
       "color": "#10b981",
       "pending": false
@@ -124,6 +124,42 @@
   "recent": [
     {
       "date": "2026-07-05",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 46,
+      "deleted": 0
+    },
+    {
+      "date": "2026-07-05",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 55,
+      "deleted": 9
+    },
+    {
+      "date": "2026-07-04",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 31,
+      "deleted": 10
+    },
+    {
+      "date": "2026-07-04",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 55,
+      "deleted": 3
+    },
+    {
+      "date": "2026-07-05",
       "author": "Вова",
       "color": "#2563eb",
       "area": "ios",
@@ -211,42 +247,6 @@
       "area_label": "🛠 скрипты",
       "added": 28,
       "deleted": 5
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 96,
-      "deleted": 26
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 19,
-      "deleted": 19
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 2,
-      "deleted": 2
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 82,
-      "deleted": 4
     }
   ],
   "activity": {
@@ -272,7 +272,7 @@
           0,
           0,
           0,
-          19
+          23
         ]
       },
       {

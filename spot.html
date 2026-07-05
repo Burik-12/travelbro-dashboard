@@ -96,9 +96,19 @@ const KEY  = "sb_publishable_1Su1_3asxB7GSkzVeMwAtg_5-tH4yj9"; // публичн
 const id = new URLSearchParams(location.search).get("id");
 const $ = s => document.getElementById(s);
 
+// кодовое имя закрытого места — настоящее название не палим до открытия маршрута
+function mysteryName(){
+  const pool = ["Hidden Gem 💎", "Secret Spot 🤫", "Treasure Point 🏴‍☠️", "Wild Find 🌿"];
+  let h = 0;
+  for (const ch of (id || "")) h = (h + ch.charCodeAt(0)) % pool.length;
+  return pool[h];
+}
+
 function reveal(spot){
   $("lockCard").classList.add("hidden");
   $("route").classList.remove("hidden");
+  $("title").textContent = spot.title;
+  document.title = "Travel Bro — " + spot.title;
   if (spot.lat != null && spot.lng != null) {
     $("coords").innerHTML = "📍 " + spot.lat.toFixed(4) + ", " + spot.lng.toFixed(4) +
       ' <a href="https://www.google.com/maps/search/?api=1&query=' + spot.lat + "," + spot.lng + '" target="_blank" rel="noopener">маршрут в картах →</a>';
@@ -121,12 +131,13 @@ async function main(){
   if (!Array.isArray(rows) || rows.length === 0) { $("err").classList.remove("hidden"); return; }
   const s = rows[0];
 
-  document.title = "Travel Bro — " + s.title;
+  const hideName = !s.open_spot && localStorage.getItem("tb_open_" + id) !== "1";
+  document.title = "Travel Bro — " + (hideName ? mysteryName() : s.title);
   const photos = (s.gallery && s.gallery.length ? s.gallery : [s.image_url]).filter(Boolean);
   if (photos.length === 0) photos.push("https://picsum.photos/seed/" + encodeURIComponent(s.image_seed || "spot") + "/900/1100");
   $("photos").innerHTML = photos.map(u => '<img loading="lazy" src="' + u + '">').join("");
   $("rarity").textContent = (s.rarity ?? 0).toFixed(1);
-  $("title").textContent = s.title;
+  $("title").textContent = hideName ? mysteryName() : s.title;
   const respect = s.respect_count ?? 0;
   $("meta").innerHTML = (s.area || "Пханган") + " · <b>⚡ " + (respect >= 1000 ? (respect/1000).toFixed(1) + "k" : respect) + "</b> респекта · нашли " + (s.found_count ?? 1);
   if (s.description) $("desc").textContent = s.description;
