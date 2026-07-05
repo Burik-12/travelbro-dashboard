@@ -8,10 +8,10 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-05 03:20 UTC",
-  "total_commits": 25,
-  "total_lines": 6396,
-  "total_deleted": 706,
+  "generated_at": "2026-07-05 03:26 UTC",
+  "total_commits": 26,
+  "total_lines": 6570,
+  "total_deleted": 714,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
@@ -28,9 +28,9 @@
     },
     {
       "author": "Вова",
-      "commits": 6,
-      "lines": 1732,
-      "deleted": 67,
+      "commits": 7,
+      "lines": 1906,
+      "deleted": 75,
       "units": 0.0,
       "last_active": "2026-07-05",
       "share_pct": 16.7,
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-05",
+      "author": "Вова",
+      "color": "#2563eb",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 174,
+      "deleted": 8
+    },
     {
       "date": "2026-07-05",
       "author": "Вова",
@@ -238,15 +247,6 @@
       "area_label": "ios",
       "added": 82,
       "deleted": 4
-    },
-    {
-      "date": "2026-07-01",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 21,
-      "deleted": 2
     }
   ],
   "activity": {
@@ -286,7 +286,7 @@
           0,
           0,
           0,
-          6
+          7
         ]
       }
     ]
@@ -395,10 +395,10 @@
           {
             "name": "Движок «редкость» места",
             "trigger": "moat",
-            "desc": "Есть миграция популярности (внутр. дефицит). Не хватает формулы (веса w₁/w₂/w₃, нормировка, порог) и внешнего тур-следа Google Places. Логика редкости — зона Claude.",
+            "desc": "Формула готова (migrations/0008): спад ×0.8 за соседний спот в радиусе 150м + куратор + бонус verified-on-site. Убрал ручной слайдер в CreateView — считает только сервер (антифрод). Осталось применить миграцию в Supabase и подключить Google Places (внешний тур-след, фаза далее).",
             "status": "wip",
-            "owner": "Алексей",
-            "color": "#f59e0b"
+            "owner": "Клод",
+            "color": "#a855f7"
           },
           {
             "name": "Респект + анти-фарм",
