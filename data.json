@@ -8,10 +8,10 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-05 03:42 UTC",
-  "total_commits": 32,
-  "total_lines": 6792,
-  "total_deleted": 748,
+  "generated_at": "2026-07-05 03:55 UTC",
+  "total_commits": 33,
+  "total_lines": 6883,
+  "total_deleted": 753,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
@@ -28,9 +28,9 @@
     },
     {
       "author": "Вова",
-      "commits": 8,
-      "lines": 1941,
-      "deleted": 87,
+      "commits": 9,
+      "lines": 2032,
+      "deleted": 92,
       "units": 0.0,
       "last_active": "2026-07-05",
       "share_pct": 16.7,
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-05",
+      "author": "Вова",
+      "color": "#2563eb",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 91,
+      "deleted": 5
+    },
     {
       "date": "2026-07-05",
       "author": "Вова",
@@ -238,15 +247,6 @@
       "area_label": "ios",
       "added": 131,
       "deleted": 23
-    },
-    {
-      "date": "2026-07-02",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 144,
-      "deleted": 104
     }
   ],
   "activity": {
@@ -286,7 +286,7 @@
           0,
           0,
           0,
-          8
+          9
         ]
       }
     ]
@@ -411,10 +411,10 @@
           {
             "name": "Респект + анти-фарм",
             "trigger": "валюта v1",
-            "desc": "Миграция respect заложена. Осталось: начисление за реакции живых людей, вес голоса по репутации, лимиты/Sybil-защита. Правила — зона Claude.",
+            "desc": "Была дыра: increment_respect/increment_found принимали только spot_id — с публичным ключом (он зашит в апп) можно было накрутить счётчик циклом в обход клиентской защиты. Закрыл миграцией 0010: анонимный device_id на устройстве + таблица spot_reactions с уникальностью (spot, device, тип реакции) — теперь максимум одна реакция с одного устройства на место. Осталось на потом: вес голоса по репутации, полноценная Sybil-защита придёт вместе с Sign in with Apple.",
             "status": "wip",
-            "owner": "Виталик",
-            "color": "#10b981"
+            "owner": "Виталик + Клод",
+            "color": "#a855f7"
           },
           {
             "name": "⚠️ Донат-петля автора",
