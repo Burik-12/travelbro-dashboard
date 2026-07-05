@@ -96,12 +96,12 @@ const KEY  = "sb_publishable_1Su1_3asxB7GSkzVeMwAtg_5-tH4yj9"; // публичн
 const id = new URLSearchParams(location.search).get("id");
 const $ = s => document.getElementById(s);
 
-// кодовое имя закрытого места — настоящее название не палим до открытия маршрута
+// кодовое имя закрытого места — настоящее название не палим до открытия маршрута.
+// Формула та же, что в приложении: первый байт UUID % 4 — имя совпадает везде.
 function mysteryName(){
   const pool = ["Hidden Gem 💎", "Secret Spot 🤫", "Treasure Point 🏴‍☠️", "Wild Find 🌿"];
-  let h = 0;
-  for (const ch of (id || "")) h = (h + ch.charCodeAt(0)) % pool.length;
-  return pool[h];
+  const b = parseInt((id || "00").slice(0, 2), 16) || 0;
+  return pool[b % pool.length];
 }
 
 function reveal(spot){
