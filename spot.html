@@ -47,8 +47,15 @@
   .block h3{font-size:14px;margin-bottom:6px}
   .block p{font-size:13.5px;line-height:1.5;color:rgba(245,243,238,.9)}
   .coords{margin-top:14px;font-size:14px;font-weight:700;color:var(--acid);text-align:left}
-  .coords a{color:var(--ink);background:var(--acid);text-decoration:none;font-size:12px;
-            padding:6px 11px;border-radius:99px;margin-left:8px;white-space:nowrap}
+  .mapsRow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .mapsRow a{color:var(--ink);background:var(--acid);text-decoration:none;font-size:12px;
+             font-weight:800;padding:8px 13px;border-radius:99px;white-space:nowrap}
+  .trackBtn{display:flex;align-items:center;gap:8px;margin-top:12px;background:var(--surface);
+            border:1px solid rgba(203,255,77,.3);border-radius:14px;padding:13px;
+            color:var(--text);font-size:13.5px;font-weight:600;text-decoration:none}
+  .trackBtn span{color:var(--acid)}
+  #routeCv{width:100%;height:150px;margin-top:12px;border-radius:14px;
+           background:rgba(203,255,77,.06);border:1px solid rgba(203,255,77,.2)}
   .footer{margin-top:28px;text-align:center;font-size:12px;color:var(--muted);line-height:1.6}
   .footer b{color:var(--acid)}
   .hidden{display:none}
@@ -80,6 +87,9 @@
     <!-- открытая часть -->
     <div id="route" class="hidden">
       <div class="coords" id="coords"></div>
+      <div class="mapsRow" id="mapsRow"></div>
+      <canvas id="routeCv" class="hidden"></canvas>
+      <a class="trackBtn hidden" id="trackBtn" target="_blank" rel="noopener">🚴 <span id="trackBrand">Трек автора</span> — открыть</a>
       <div class="block hidden" id="howBlock"><h3>🛵 Как добрался автор</h3><p id="howText"></p></div>
       <div class="block hidden" id="hacksBlock"><h3>💡 Лайфхаки</h3><p id="hacksText"></p></div>
       <div class="block"><h3>🤝 Правило клуба</h3><p>Не публикуй точку в открытых соцсетях — сохрани место редким.</p></div>
@@ -110,14 +120,56 @@ function reveal(spot){
   $("title").textContent = spot.title;
   document.title = "Travel Bro — " + spot.title;
   if (spot.lat != null && spot.lng != null) {
-    $("coords").innerHTML = "📍 " + spot.lat.toFixed(4) + ", " + spot.lng.toFixed(4) +
-      ' <a href="https://www.google.com/maps/search/?api=1&query=' + spot.lat + "," + spot.lng + '" target="_blank" rel="noopener">маршрут в картах →</a>';
+    $("coords").textContent = "📍 " + spot.lat.toFixed(4) + ", " + spot.lng.toFixed(4);
+    // выбор из трёх карт — как в приложении
+    $("mapsRow").innerHTML =
+      '<a href="https://www.google.com/maps/search/?api=1&query=' + spot.lat + ',' + spot.lng + '" target="_blank" rel="noopener">Google Maps</a>' +
+      '<a href="http://maps.apple.com/?ll=' + spot.lat + ',' + spot.lng + '" target="_blank" rel="noopener">Apple Maps</a>' +
+      '<a href="mapsme://map?ll=' + spot.lat + ',' + spot.lng + '&n=' + encodeURIComponent(spot.title) + '">MAPS.ME</a>';
   } else {
     $("coords").textContent = "📍 автор не оставил точных координат — район: " + (spot.area || "Пханган");
+  }
+  drawRoute(spot.route);
+  if (spot.track_url) {
+    const h = spot.track_url.toLowerCase();
+    $("trackBrand").textContent = h.includes("strava") ? "Трек автора в Strava"
+                               : h.includes("garmin") ? "Трек автора в Garmin Connect"
+                               : "Трек автора";
+    $("trackBtn").href = spot.track_url;
+    $("trackBtn").classList.remove("hidden");
   }
   if (spot.how_to_get) { $("howBlock").classList.remove("hidden"); $("howText").textContent = spot.how_to_get; }
   if (spot.lifehacks)  { $("hacksBlock").classList.remove("hidden"); $("hacksText").textContent = spot.lifehacks; }
   localStorage.setItem("tb_open_" + id, "1");
+}
+
+// путь автора из GPX (Strava/Garmin) — рисуем силуэт трека
+function drawRoute(pts){
+  if (!Array.isArray(pts) || pts.length < 2) return;
+  const cv = $("routeCv");
+  cv.classList.remove("hidden");
+  const W = cv.clientWidth || 440, H = 150, pad = 16;
+  cv.width = W * 2; cv.height = H * 2;            // retina
+  const ctx = cv.getContext("2d");
+  ctx.scale(2, 2);
+  const lats = pts.map(p => p[0]), lngs = pts.map(p => p[1]);
+  const mnLa = Math.min(...lats), mxLa = Math.max(...lats);
+  const mnLn = Math.min(...lngs), mxLn = Math.max(...lngs);
+  const kx = (W - pad * 2) / Math.max(mxLn - mnLn, 1e-6);
+  const ky = (H - pad * 2) / Math.max(mxLa - mnLa, 1e-6);
+  const k = Math.min(kx, ky);
+  const ox = (W - (mxLn - mnLn) * k) / 2, oy = (H - (mxLa - mnLa) * k) / 2;
+  const X = ln => ox + (ln - mnLn) * k;
+  const Y = la => H - (oy + (la - mnLa) * k);     // север сверху
+  ctx.strokeStyle = "#CBFF4D"; ctx.lineWidth = 3; ctx.lineJoin = "round"; ctx.lineCap = "round";
+  ctx.beginPath();
+  pts.forEach((p, i) => i ? ctx.lineTo(X(p[1]), Y(p[0])) : ctx.moveTo(X(p[1]), Y(p[0])));
+  ctx.stroke();
+  // старт и финиш
+  ctx.fillStyle = "#F5F3EE";
+  ctx.beginPath(); ctx.arc(X(pts[0][1]), Y(pts[0][0]), 4, 0, 7); ctx.fill();
+  ctx.fillStyle = "#CBFF4D";
+  ctx.beginPath(); ctx.arc(X(pts[pts.length-1][1]), Y(pts[pts.length-1][0]), 5, 0, 7); ctx.fill();
 }
 
 async function main(){
