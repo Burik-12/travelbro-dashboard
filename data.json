@@ -8,18 +8,18 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-05 17:17 UTC",
-  "total_commits": 43,
-  "total_lines": 8363,
-  "total_deleted": 856,
+  "generated_at": "2026-07-06 04:54 UTC",
+  "total_commits": 44,
+  "total_lines": 8422,
+  "total_deleted": 861,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
     {
       "author": "Виталик",
-      "commits": 29,
-      "lines": 5659,
-      "deleted": 759,
+      "commits": 30,
+      "lines": 5718,
+      "deleted": 764,
       "units": 0.0,
       "last_active": "2026-07-06",
       "share_pct": 66.7,
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-06",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 59,
+      "deleted": 5
+    },
     {
       "date": "2026-07-06",
       "author": "Виталик",
@@ -238,27 +247,18 @@
       "area_label": "веб-страница",
       "added": 0,
       "deleted": 0
-    },
-    {
-      "date": "2026-07-05",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 46,
-      "deleted": 0
     }
   ],
   "activity": {
     "labels": [
-      "11.05",
       "18.05",
       "25.05",
       "01.06",
       "08.06",
       "15.06",
       "22.06",
-      "29.06"
+      "29.06",
+      "06.07"
     ],
     "datasets": [
       {
@@ -271,8 +271,8 @@
           0,
           0,
           0,
-          0,
-          28
+          28,
+          2
         ]
       },
       {
@@ -285,8 +285,8 @@
           0,
           0,
           0,
-          0,
-          14
+          14,
+          0
         ]
       }
     ]
