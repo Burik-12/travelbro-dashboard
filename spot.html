@@ -73,6 +73,12 @@
     <div class="desc" id="desc"></div>
     <div class="author"><img id="ava" alt=""><div><span>нашёл</span><br><span id="authorName" style="color:var(--text);font-weight:700;font-size:14px"></span></div></div>
 
+    <!-- deep-link в приложение: если апп стоит — откроет этот спот;
+         если нет — ссылка уже в буфере, апп подхватит её на первом запуске -->
+    <button class="btn ghost" id="appBtn" style="margin-top:16px">📲 Открыть в приложении</button>
+    <div class="fine hidden" id="appHint">Нет приложения? Ссылка на это место уже скопирована —
+      установи Travel Bro, и оно откроется само. Скоро в App Store.</div>
+
     <!-- закрытая часть -->
     <div class="lockCard" id="lockCard">
       <div class="lockIco">🔒</div>
@@ -199,6 +205,15 @@ async function main(){
   if (s.description) $("desc").textContent = s.description;
   $("authorName").textContent = s.author || "@bro";
   $("ava").src = "https://picsum.photos/seed/" + encodeURIComponent(s.author || "bro") + "/80/80";
+
+  // deep-link: тап кладёт ссылку в буфер (для deferred-запуска после установки)
+  // и пробует открыть апп по схеме travelbro://. Если аппа нет — Safari покажет
+  // алерт «не удалось открыть», под кнопкой появится подсказка.
+  $("appBtn").addEventListener("click", () => {
+    try { navigator.clipboard.writeText(location.origin + location.pathname + "?id=" + id); } catch (e) {}
+    setTimeout(() => $("appHint").classList.remove("hidden"), 1200);
+    location.href = "travelbro://spot/" + id;
+  });
 
   $("page").classList.remove("hidden");
   const opened = s.open_spot || localStorage.getItem("tb_open_" + id) === "1";

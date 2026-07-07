@@ -8,20 +8,20 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-06 04:54 UTC",
-  "total_commits": 44,
-  "total_lines": 8422,
-  "total_deleted": 861,
+  "generated_at": "2026-07-07 04:15 UTC",
+  "total_commits": 45,
+  "total_lines": 8758,
+  "total_deleted": 866,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
     {
       "author": "Виталик",
-      "commits": 30,
-      "lines": 5718,
-      "deleted": 764,
+      "commits": 31,
+      "lines": 6054,
+      "deleted": 769,
       "units": 0.0,
-      "last_active": "2026-07-06",
+      "last_active": "2026-07-07",
       "share_pct": 66.7,
       "color": "#10b981",
       "pending": false
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-07",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 336,
+      "deleted": 5
+    },
     {
       "date": "2026-07-06",
       "author": "Виталик",
@@ -238,15 +247,6 @@
       "area_label": "ios",
       "added": 35,
       "deleted": 12
-    },
-    {
-      "date": "2026-07-05",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "веб-страница",
-      "area_label": "веб-страница",
-      "added": 0,
-      "deleted": 0
     }
   ],
   "activity": {
@@ -272,7 +272,7 @@
           0,
           0,
           28,
-          2
+          3
         ]
       },
       {
@@ -394,6 +394,14 @@
             "status": "live",
             "owner": "Виталик + Клод",
             "color": "#a855f7"
+          },
+          {
+            "name": "Deep-link из TikTok",
+            "trigger": "замыкает петлю",
+            "desc": "Сделано без сторонних SDK (Branch/AppsFlyer не понадобились). Прямой вход: схема travelbro://spot/<id> — ссылка/QR открывает именно тот спот (проверено в симуляторе). Deferred: кнопка «Открыть в приложении» на spot.html кладёт ссылку в буфер → апп на первом запуске читает буфер (detectPatterns, без лишних системных запросов) и открывает место. Дебаг-флаг -openSpot <uuid>. Полный прогон deferred-сценария станет возможен после выхода в App Store/TestFlight.",
+            "status": "live",
+            "owner": "Виталик + Клод",
+            "color": "#a855f7"
           }
         ]
       },
@@ -403,7 +411,15 @@
           {
             "name": "Движок «редкость» места",
             "trigger": "moat",
-            "desc": "Формула готова (migrations/0009): спад ×0.8 за соседний спот в радиусе 150м + куратор + бонус verified-on-site. Убрал ручной слайдер в CreateView — считает только сервер (антифрод). Осталось применить миграцию в Supabase и подключить Google Places (внешний тур-след, фаза далее).",
+            "desc": "Формула готова (migrations/0009): спад ×0.8 за соседний спот в радиусе 150м + куратор + бонус verified-on-site. Убрал ручной слайдер в CreateView — считает только сервер (антифрод). Внешний тур-след подключён — см. «Тур-след (OSM)».",
+            "status": "wip",
+            "owner": "Клод",
+            "color": "#ef4444"
+          },
+          {
+            "name": "Тур-след (OSM вместо Google Places)",
+            "trigger": "внешний сигнал",
+            "desc": "Пункт плана «Google Places: тур-след» закрыт разбором и кодом. Разбор цены/ToS (docs/Тур-след.md): Nearby Search ~$32/1000 (Pro, 5к бесплатно/мес), а главное — ToS запрещает хранить данные >30 дней и строить на них свою базу. Взяли OpenStreetMap/Overpass: бесплатно, хранить можно (ODbL). Сигнал = POI (tourism + бары/кафе) в радиусе 800 м → колонка spots.tourist_poi_count, штраф к редкости до −1.5 (миграция 0014). Калибровка по острову: Хад Рин ~172 POI, Шри Тану ~44, глушь 0–10. ОСТАЛОСЬ: Виталику запустить 0014 в SQL Editor + прогнать scripts/tourist_trace.py (нужен DB-пароль, Клоду доступ к живой базе закрыт).",
             "status": "wip",
             "owner": "Клод",
             "color": "#ef4444"
@@ -461,22 +477,6 @@
       {
         "label": "📋 v1 — план по порядку",
         "features": [
-          {
-            "name": "Deep-link из TikTok",
-            "trigger": "замыкает петлю",
-            "desc": "Deferred deep link: тап по артефакту → установка → апп открывает именно тот спот. Пока роль подстраховки играет веб-лендинг spot.html (уже живой) — но без апки в App Store устанавливать всё равно нечего, это сейчас реальное узкое место петли. Выбор сервиса (Branch/AppsFlyer/Apple) — зона Claude.",
-            "status": "planned",
-            "owner": "Алексей",
-            "color": "#f59e0b"
-          },
-          {
-            "name": "Google Places: тур-след",
-            "trigger": "внешний сигнал",
-            "desc": "Review-count + плотность POI в радиусе как внешний сигнал редкости. Нужно разобрать цену и ToS API. Зона Claude.",
-            "status": "planned",
-            "owner": "Алексей",
-            "color": "#f59e0b"
-          },
           {
             "name": "Боевой seed + phangan.events",
             "trigger": "запуск",
