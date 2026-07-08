@@ -8,18 +8,18 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-08 10:11 UTC",
-  "total_commits": 50,
-  "total_lines": 12378,
-  "total_deleted": 1018,
+  "generated_at": "2026-07-08 11:15 UTC",
+  "total_commits": 51,
+  "total_lines": 12622,
+  "total_deleted": 1037,
   "modules_active": 0,
   "modules_total": 7,
   "rows": [
     {
       "author": "Виталик",
-      "commits": 36,
-      "lines": 9674,
-      "deleted": 921,
+      "commits": 37,
+      "lines": 9918,
+      "deleted": 940,
       "units": 0.0,
       "last_active": "2026-07-08",
       "share_pct": 66.7,
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-08",
+      "author": "Виталик",
+      "color": "#10b981",
+      "area": "ios",
+      "area_label": "ios",
+      "added": 244,
+      "deleted": 19
+    },
     {
       "date": "2026-07-08",
       "author": "Виталик",
@@ -238,15 +247,6 @@
       "area_label": "🛠 скрипты",
       "added": 37,
       "deleted": 1
-    },
-    {
-      "date": "2026-07-05",
-      "author": "Вова",
-      "color": "#2563eb",
-      "area": "scripts",
-      "area_label": "🛠 скрипты",
-      "added": 2,
-      "deleted": 2
     }
   ],
   "activity": {
@@ -272,7 +272,7 @@
           0,
           0,
           28,
-          8
+          9
         ]
       },
       {
