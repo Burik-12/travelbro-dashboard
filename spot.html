@@ -67,11 +67,11 @@
   <div class="logo">TRAVEL BRO</div>
   <div id="page" class="hidden">
     <div class="carousel" id="photos"></div>
-    <div class="rarityRow"><div class="rarity" id="rarity"></div><div class="rarityCap">РЕДКОСТЬ /10</div></div>
+    <div class="rarityRow"><div class="rarity" id="rarity"></div><div class="rarityCap" id="rarityCap">РЕДКОСТЬ /10</div></div>
     <h1 id="title"></h1>
     <div class="meta" id="meta"></div>
     <div class="desc" id="desc"></div>
-    <div class="author"><img id="ava" alt=""><div><span>нашёл</span><br><span id="authorName" style="color:var(--text);font-weight:700;font-size:14px"></span></div></div>
+    <div class="author"><img id="ava" alt=""><div><span id="foundByLbl">нашёл</span><br><span id="authorName" style="color:var(--text);font-weight:700;font-size:14px"></span></div></div>
 
     <!-- deep-link в приложение: если апп стоит — откроет этот спот;
          если нет — ссылка уже в буфере, апп подхватит её на первом запуске -->
@@ -82,7 +82,7 @@
     <!-- закрытая часть -->
     <div class="lockCard" id="lockCard">
       <div class="lockIco">🔒</div>
-      <h2>Точная локация и маршрут скрыты</h2>
+      <h2 id="lockTitle">Точная локация и маршрут скрыты</h2>
       <p id="lockSub">Автор лично добрался сюда и описал как. Поддержи его донатом — и маршрут твой.</p>
       <a class="btn hidden" id="donateBtn" target="_blank" rel="noopener">🎁 Задонатить автору</a>
       <button class="btn ghost hidden" id="afterDonateBtn">Я задонатил — открыть маршрут</button>
@@ -96,12 +96,12 @@
       <div class="mapsRow" id="mapsRow"></div>
       <canvas id="routeCv" class="hidden"></canvas>
       <a class="trackBtn hidden" id="trackBtn" target="_blank" rel="noopener">🚴 <span id="trackBrand">Трек автора</span> — открыть</a>
-      <div class="block hidden" id="howBlock"><h3>🛵 Как добрался автор</h3><p id="howText"></p></div>
-      <div class="block hidden" id="hacksBlock"><h3>💡 Лайфхаки</h3><p id="hacksText"></p></div>
-      <div class="block"><h3>🤝 Правило клуба</h3><p>Не публикуй точку в открытых соцсетях — сохрани место редким.</p></div>
+      <div class="block hidden" id="howBlock"><h3 id="howTitle">🛵 Как добрался автор</h3><p id="howText"></p></div>
+      <div class="block hidden" id="hacksBlock"><h3 id="hacksTitle">💡 Лайфхаки</h3><p id="hacksText"></p></div>
+      <div class="block"><h3 id="ruleTitle">🤝 Правило клуба</h3><p id="ruleText">Не публикуй точку в открытых соцсетях — сохрани место редким.</p></div>
     </div>
 
-    <div class="footer">Нашёл своё место без людей?<br><b>Travel Bro</b> — делись маршрутом и получай донаты.<br>Скоро в App Store.</div>
+    <div class="footer" id="footer">Нашёл своё место без людей?<br><b>Travel Bro</b> — делись маршрутом и получай донаты.<br>Скоро в App Store.</div>
   </div>
   <div class="err hidden" id="err">Место не найдено 🤷<br>Проверь ссылку.</div>
 </div>
@@ -111,6 +111,59 @@ const SUPA = "https://iqlkkeowzjanhkgbvtbg.supabase.co";
 const KEY  = "sb_publishable_1Su1_3asxB7GSkzVeMwAtg_5-tH4yj9"; // публичный ключ, только чтение по правилам базы
 const id = new URLSearchParams(location.search).get("id");
 const $ = s => document.getElementById(s);
+
+// язык страницы: ru — как в базе, остальным — английский (аудитория TikTok международная)
+const isRU = (navigator.language || "").toLowerCase().startsWith("ru");
+const L = isRU ? {
+  pageTitle: "Travel Bro — место", rarityCap: "РЕДКОСТЬ /10", foundBy: "нашёл",
+  appBtn: "📲 Открыть в приложении",
+  appHint: "Нет приложения? Ссылка на это место уже скопирована — установи Travel Bro, и оно откроется само. Скоро в App Store.",
+  lockTitle: "Точная локация и маршрут скрыты",
+  lockSub: "Автор лично добрался сюда и описал как. Поддержи его донатом — и маршрут твой.",
+  lockSubFree: "Автор ещё не подключил донаты — маршрут пока открыт бесплатно.",
+  donateBtn: "🎁 Задонатить автору", afterDonate: "Я задонатил — открыть маршрут", freeBtn: "Открыть маршрут",
+  honestFine: "оплата пока на доверии — донат уходит автору напрямую",
+  howTitle: "🛵 Как добрался автор", hacksTitle: "💡 Лайфхаки",
+  ruleTitle: "🤝 Правило клуба", ruleText: "Не публикуй точку в открытых соцсетях — сохрани место редким.",
+  trackStrava: "Трек автора в Strava", trackGarmin: "Трек автора в Garmin Connect", track: "Трек автора",
+  noCoords: "📍 автор не оставил точных координат — район: ",
+  respect: "респекта", found: "нашли",
+  footer: "Нашёл своё место без людей?<br><b>Travel Bro</b> — делись маршрутом и получай донаты.<br>Скоро в App Store.",
+  err: "Место не найдено 🤷<br>Проверь ссылку.", defaultArea: "Пханган"
+} : {
+  pageTitle: "Travel Bro — place", rarityCap: "RARITY /10", foundBy: "found by",
+  appBtn: "📲 Open in the app",
+  appHint: "No app yet? The link to this place is already copied — install Travel Bro and it will open by itself. Coming to the App Store.",
+  lockTitle: "Exact location and route are hidden",
+  lockSub: "The author got here in person and wrote down how. Support them with a donation — and the route is yours.",
+  lockSubFree: "The author hasn't set up donations yet — the route is free for now.",
+  donateBtn: "🎁 Donate to the author", afterDonate: "I donated — open the route", freeBtn: "Open the route",
+  honestFine: "trust-based for now — the donation goes straight to the author",
+  howTitle: "🛵 How the author got there", hacksTitle: "💡 Life hacks",
+  ruleTitle: "🤝 Club rule", ruleText: "Don't post the location on public social media — keep the place rare.",
+  trackStrava: "Author's track on Strava", trackGarmin: "Author's track on Garmin Connect", track: "Author's track",
+  noCoords: "📍 the author left no exact coordinates — area: ",
+  respect: "respect", found: "found by",
+  footer: "Found your own place with no people?<br><b>Travel Bro</b> — share the route, get donations.<br>Coming to the App Store.",
+  err: "Place not found 🤷<br>Check the link.", defaultArea: "Phangan"
+};
+document.title = L.pageTitle;
+$("rarityCap").textContent = L.rarityCap;
+$("foundByLbl").textContent = L.foundBy;
+$("appBtn").textContent = L.appBtn;
+$("appHint").textContent = L.appHint;
+$("lockTitle").textContent = L.lockTitle;
+$("lockSub").textContent = L.lockSub;
+$("donateBtn").textContent = L.donateBtn;
+$("afterDonateBtn").textContent = L.afterDonate;
+$("freeBtn").textContent = L.freeBtn;
+$("honestFine").textContent = L.honestFine;
+$("howTitle").textContent = L.howTitle;
+$("hacksTitle").textContent = L.hacksTitle;
+$("ruleTitle").textContent = L.ruleTitle;
+$("ruleText").textContent = L.ruleText;
+$("footer").innerHTML = L.footer;
+$("err").innerHTML = L.err;
 
 // кодовое имя закрытого места — настоящее название не палим до открытия маршрута.
 // Формула та же, что в приложении: первый байт UUID % 4 — имя совпадает везде.
@@ -137,14 +190,14 @@ function reveal(spot){
       '<a href="http://maps.apple.com/?ll=' + spot.lat + ',' + spot.lng + '" target="_blank" rel="noopener">Apple Maps</a>' +
       '<a href="mapsme://map?ll=' + spot.lat + ',' + spot.lng + '&n=' + encodeURIComponent(spot.title) + '">MAPS.ME</a>';
   } else {
-    $("coords").textContent = "📍 автор не оставил точных координат — район: " + (spot.area || "Пханган");
+    $("coords").textContent = L.noCoords + (spot.area || L.defaultArea);
   }
   drawRoute(spot.route);
   if (spot.track_url) {
     const h = spot.track_url.toLowerCase();
-    $("trackBrand").textContent = h.includes("strava") ? "Трек автора в Strava"
-                               : h.includes("garmin") ? "Трек автора в Garmin Connect"
-                               : "Трек автора";
+    $("trackBrand").textContent = h.includes("strava") ? L.trackStrava
+                               : h.includes("garmin") ? L.trackGarmin
+                               : L.track;
     $("trackBtn").href = spot.track_url;
     $("trackBtn").classList.remove("hidden");
   }
@@ -201,7 +254,7 @@ async function main(){
   $("rarity").textContent = (s.rarity ?? 0).toFixed(1);
   $("title").textContent = hideName ? mysteryName(s.category) : s.title;
   const respect = s.respect_count ?? 0;
-  $("meta").innerHTML = (s.area || "Пханган") + " · <b>⚡ " + (respect >= 1000 ? (respect/1000).toFixed(1) + "k" : respect) + "</b> респекта · нашли " + (s.found_count ?? 1);
+  $("meta").innerHTML = (s.area || L.defaultArea) + " · <b>⚡ " + (respect >= 1000 ? (respect/1000).toFixed(1) + "k" : respect) + "</b> " + L.respect + " · " + L.found + " " + (s.found_count ?? 1);
   if (s.description) $("desc").textContent = s.description;
   $("authorName").textContent = s.author || "@bro";
   $("ava").src = "https://picsum.photos/seed/" + encodeURIComponent(s.author || "bro") + "/80/80";
@@ -228,7 +281,7 @@ async function main(){
     });
     $("afterDonateBtn").addEventListener("click", () => reveal(s));
   } else {
-    $("lockSub").textContent = "Автор ещё не подключил донаты — маршрут пока открыт бесплатно.";
+    $("lockSub").textContent = L.lockSubFree;
     $("freeBtn").classList.remove("hidden");
     $("freeBtn").addEventListener("click", () => reveal(s));
   }
