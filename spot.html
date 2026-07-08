@@ -70,6 +70,7 @@
     <div class="rarityRow"><div class="rarity" id="rarity"></div><div class="rarityCap" id="rarityCap">РЕДКОСТЬ /10</div></div>
     <h1 id="title"></h1>
     <div class="meta" id="meta"></div>
+    <div class="meta hidden" id="painsRow" style="margin-top:4px;color:var(--acid);font-weight:700"></div>
     <div class="desc" id="desc"></div>
     <div class="author"><img id="ava" alt=""><div><span id="foundByLbl">нашёл</span><br><span id="authorName" style="color:var(--text);font-weight:700;font-size:14px"></span></div></div>
 
@@ -129,6 +130,7 @@ const L = isRU ? {
   noCoords: "📍 автор не оставил точных координат — район: ",
   respect: "респекта", found: "нашли",
   footer: "Нашёл своё место без людей?<br><b>Travel Bro</b> — делись маршрутом и получай донаты.<br>Скоро в App Store.",
+  pains: { cheap: "💸 бесплатно/дёшево", quiet: "🤫 без толпы", social: "🤝 встретишь своих" }, gold: "🏆 золотой спот",
   err: "Место не найдено 🤷<br>Проверь ссылку.", defaultArea: "Пханган"
 } : {
   pageTitle: "Travel Bro — place", rarityCap: "RARITY /10", foundBy: "found by",
@@ -145,6 +147,7 @@ const L = isRU ? {
   noCoords: "📍 the author left no exact coordinates — area: ",
   respect: "respect", found: "found by",
   footer: "Found your own place with no people?<br><b>Travel Bro</b> — share the route, get donations.<br>Coming to the App Store.",
+  pains: { cheap: "💸 free/cheap", quiet: "🤫 no crowds", social: "🤝 meet your people" }, gold: "🏆 golden spot",
   err: "Place not found 🤷<br>Check the link.", defaultArea: "Phangan"
 };
 document.title = L.pageTitle;
@@ -256,6 +259,13 @@ async function main(){
   const respect = s.respect_count ?? 0;
   $("meta").innerHTML = (s.area || L.defaultArea) + " · <b>⚡ " + (respect >= 1000 ? (respect/1000).toFixed(1) + "k" : respect) + "</b> " + L.respect + " · " + L.found + " " + (s.found_count ?? 1);
   if (s.description) $("desc").textContent = s.description;
+  if (Array.isArray(s.pains) && s.pains.length) {
+    const tags = s.pains.map(k => L.pains[k]).filter(Boolean);
+    if (tags.length) {
+      $("painsRow").textContent = (tags.length === 3 ? L.gold + " · " : "") + tags.join(" · ");
+      $("painsRow").classList.remove("hidden");
+    }
+  }
   $("authorName").textContent = s.author || "@bro";
   $("ava").src = "https://picsum.photos/seed/" + encodeURIComponent(s.author || "bro") + "/80/80";
 
