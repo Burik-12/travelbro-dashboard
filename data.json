@@ -8,9 +8,9 @@
   },
   "recent_mode": "area",
   "idle_after_days": 7,
-  "generated_at": "2026-07-08 17:45 UTC",
-  "total_commits": 52,
-  "total_lines": 12826,
+  "generated_at": "2026-07-21 10:18 UTC",
+  "total_commits": 53,
+  "total_lines": 13099,
   "total_deleted": 1045,
   "modules_active": 0,
   "modules_total": 7,
@@ -28,11 +28,11 @@
     },
     {
       "author": "Вова",
-      "commits": 14,
-      "lines": 2704,
+      "commits": 15,
+      "lines": 2977,
       "deleted": 97,
       "units": 0.0,
-      "last_active": "2026-07-05",
+      "last_active": "2026-07-21",
       "share_pct": 16.7,
       "color": "#2563eb",
       "pending": false
@@ -122,6 +122,15 @@
     }
   ],
   "recent": [
+    {
+      "date": "2026-07-21",
+      "author": "Вова",
+      "color": "#2563eb",
+      "area": "server",
+      "area_label": "server",
+      "added": 273,
+      "deleted": 0
+    },
     {
       "date": "2026-07-09",
       "author": "Виталик",
@@ -238,27 +247,18 @@
       "area_label": "ios",
       "added": 404,
       "deleted": 40
-    },
-    {
-      "date": "2026-07-05",
-      "author": "Виталик",
-      "color": "#10b981",
-      "area": "ios",
-      "area_label": "ios",
-      "added": 146,
-      "deleted": 3
     }
   ],
   "activity": {
     "labels": [
-      "18.05",
-      "25.05",
       "01.06",
       "08.06",
       "15.06",
       "22.06",
       "29.06",
-      "06.07"
+      "06.07",
+      "13.07",
+      "20.07"
     ],
     "datasets": [
       {
@@ -269,10 +269,10 @@
           0,
           0,
           0,
-          0,
-          0,
           28,
-          10
+          10,
+          0,
+          0
         ]
       },
       {
@@ -283,10 +283,10 @@
           0,
           0,
           0,
-          0,
-          0,
           14,
-          0
+          0,
+          0,
+          1
         ]
       }
     ]
